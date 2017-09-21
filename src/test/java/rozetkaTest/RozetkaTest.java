@@ -11,7 +11,7 @@ import java.util.Map;
 public class RozetkaTest extends BaseTest {
 
     @Test
-    public void desireListRozetka() {
+    public void wishListRozetka() throws InterruptedException {
         String productID;
         String reviews;
         Integer reviewsInt;
@@ -30,7 +30,7 @@ public class RozetkaTest extends BaseTest {
         mainPage.moveToNotebooksAndComputers();
         filterBlock.selectFilter();
 
-     //Get product id with max reviews on page
+        //Get product id with max reviews on page
         Map<String, Integer> itemsMap = new HashMap<>();
         int numberOfItems = itemsPage.getNumberOfItems();
 
@@ -42,11 +42,7 @@ public class RozetkaTest extends BaseTest {
             reviewsInt = itemsPage.getIntegerReviews( reviews );
 
             if (reviewsInt > 0) {
-                try {
-                    itemsMap.put( productID, reviewsInt );
-                } catch (Exception e) {
-                    logger.error( "Can't put item to itemsMap" );
-                }
+                itemsMap.put( productID, reviewsInt );
             }
         }
 

@@ -12,7 +12,7 @@ public class ItemsPage extends BasePage {
         super( driver );
     }
 
-    @FindBy(xpath = "//div[@id='catalog_goods_block']//div[@class='g-id']")
+    @FindBy(xpath = "//div[@id='catalog_goods_block']//div[@data-view_type]")
     private List<WebElement> itemID;
 
     public int getNumberOfItems() {
@@ -55,30 +55,15 @@ public class ItemsPage extends BasePage {
     public Integer getIntegerReviews(String reviews) {
         Integer reviewsInteger = 0;
         try {
-            reviewsInteger = Integer.parseInt( reviews );
+            if (reviews != null && reviews.length() > 0 ) {
+                reviewsInteger = Integer.parseInt( reviews );
+            }
         } catch (Exception e) {
-            logger.error( "Can't parse reviews to Integer" );
+            logger.error( "Can't parse reviews to Integer: " + reviews );
         }
         return reviewsInteger;
     }
 
-    public void addToWishList(String maxReviewsID) {
-        String wishlistIconXPath = "";
-        String wishListLinkXPath = "";
-        WebElement wishlistIcon;
-        WebElement wishListLink;
-        wishlistIconXPath = "//div[@id='wishlist-popup-" + maxReviewsID + "']";
-        try {
-            wishlistIcon = actionsWithElements.getElementByXPath( wishlistIconXPath );
-            wishListLinkXPath = wishlistIconXPath + "//div/a";
-            wishListLink = actionsWithElements.getElementByXPath( wishListLinkXPath );
-
-            actionsWithElements.moveTo( wishlistIcon );
-            actionsWithElements.clickAction( wishListLink );
-        } catch (Exception e) {
-            logger.error( "Can't click wishlist button" );
-        }
-    }
 
     public void goToProductPage(String id) {
         String productLinkXPath;
@@ -87,4 +72,22 @@ public class ItemsPage extends BasePage {
         productLink = actionsWithElements.getElementByXPath( productLinkXPath );
         actionsWithElements.clickAction( productLink );
     }
+
+//    public void addToWishList(String maxReviewsID) {
+//        String wishlistIconXPath = "";
+//        String wishListLinkXPath = "";
+//        WebElement wishlistIcon;
+//        WebElement wishListLink;
+//        wishlistIconXPath = "//div[@id='wishlist-popup-" + maxReviewsID + "']";
+//        try {
+//            wishlistIcon = actionsWithElements.getElementByXPath( wishlistIconXPath );
+//            wishListLinkXPath = wishlistIconXPath + "//div/a";
+//            wishListLink = actionsWithElements.getElementByXPath( wishListLinkXPath );
+//
+//            actionsWithElements.moveTo( wishlistIcon );
+//            actionsWithElements.clickAction( wishListLink );
+//        } catch (Exception e) {
+//            logger.error( "Can't click wishlist button" );
+//        }
+//    }
 }

@@ -16,17 +16,20 @@ public class MainPage extends BasePage {
     @FindBy(xpath = ".//li[@id='2416']")
     private WebElement notebooksAndComputers;
 
-    @FindBy(xpath = "//li[@class='f-menu-sub']//a[@href='https://rozetka.com.ua/notebooks/c80004/']")
+    @FindBy(xpath = "//*[@id='2416']/div/div[2]/div/ul[1]/li[1]/a")
     private WebElement notebooks;
+
+    @FindBy(xpath = "//div[@name='block_with_goods']//p//a[@href='https://rozetka.com.ua/notebooks/c80004/']")
+    private WebElement notebooksSubmenu;
 
     public void moveToNotebooksAndComputers() {
         try {
             actionsWithElements.moveTo( fatMenuButton );
             actionsWithElements.moveTo( notebooksAndComputers );
             actionsWithElements.clickAction( notebooks );
-
         } catch (Exception e) {
-            logger.error( "Element can't be clicked: " + notebooksAndComputers.toString() );
+            actionsWithElements.clickAction( notebooksAndComputers );
+            actionsWithElements.clickAction( notebooksSubmenu );
         }
     }
 }
