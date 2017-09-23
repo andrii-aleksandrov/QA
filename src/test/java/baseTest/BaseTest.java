@@ -10,6 +10,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.TestName;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
@@ -24,6 +26,8 @@ import pages.*;
 import java.io.File;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -31,28 +35,41 @@ import static org.hamcrest.CoreMatchers.is;
 /**
  * Base class for all tests
  */
-
+@RunWith(Parameterized.class)
 public class BaseTest {
     public WebDriver driver;
+    public String browser;
     public Logger logger = Logger.getLogger( getClass() );
     public Utils utils = new Utils();
     public String pathToScreenShot;
     private boolean isTestPass = false;
-    public String browser;
+    public String handleHost;
 
     // declare new pages here
     public BasePage basePage;
-    public LoginPage loginPage;
     public MainPage mainPage;
     public ActionsWithElements actionsWithElements;
-    public String handleHost;
+    public LoginPage loginPage;
     public FilterBlock filterBlock;
     public ItemsPage itemsPage;
     public Header header;
     public WishList wishList;
     public ProductPage productPage;
 
-    public BaseTest() {
+    @Parameterized.Parameters
+    public static Collection<Object[]> data() {
+        Object[][] data = new Object[][]{
+                {"chrome"},
+//                {"fireFox"},
+//                {"phantomJs"},
+//                { "iedriver" },
+//                { "opera" }
+        };
+        return Arrays.asList( data );
+    }
+
+    public BaseTest(String browser) {
+        this.browser = browser;
     }
 
     @Rule
@@ -68,12 +85,6 @@ public class BaseTest {
                 + this.getClass().getPackage().getName() + "\\"
                 + this.getClass().getSimpleName() + "\\"
                 + this.testName.getMethodName() + ".jpg";
-
-        try {
-            browser = ConfigData.getCfgValue( "DRIVER" );
-        } catch (IOException e) {
-            logger.error( "Can't get driver name from config data" );
-        }
 
         if ("fireFox".equals( browser )) {
             logger.info( "FireFox will be started " );
@@ -91,7 +102,7 @@ public class BaseTest {
             logger.info( "Chrome is started" );
         } else if ("iedriver".equals( browser )) {
             logger.info( "IE will be started " );
-            File file1 = new File( ConfigData.getCfgValue( "DRIVER_PATH" ) + "MicrosoftWebDriver.exe" );
+            File file1 = new File( ConfigData.getCfgValue( "DRIVER_PATH" ) + "IEDriverServer.exe" );
             System.setProperty( "webdriver.ie.driver", file1.getAbsolutePath() );
             DesiredCapabilities capabilities = DesiredCapabilities.internetExplorer();
             capabilities.setCapability( CapabilityType.BROWSER_NAME, "IE" );
@@ -108,14 +119,10 @@ public class BaseTest {
         } else if ("phantomJs".equals( browser )) {
             logger.info( "PHANTOMJS will be started" );
             File filePhantomjs = new File( ConfigData.getCfgValue( "DRIVER_PATH" ) + "phantomjs.exe" );
-            System.setProperty( "webdriver.phantomjs.driver", filePhantomjs.getAbsolutePath() );
             DesiredCapabilities caps = new DesiredCapabilities();
             caps.setJavascriptEnabled( true );
             caps.setCapability( "takesScreenshot", true );
-            caps.setCapability(
-                    PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY,
-                    "D:/QA/drivers/phantomjs.exe"
-            );
+            caps.setCapability( PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY, filePhantomjs.getAbsolutePath() );
             driver = new PhantomJSDriver( caps );
             logger.info( "PHANTOMJS is started" );
         }
@@ -127,9 +134,9 @@ public class BaseTest {
 
         // initialize new pages here
         basePage = new BasePage( driver );
-        loginPage = new LoginPage( driver );
-        mainPage = new MainPage( driver );
         actionsWithElements = new ActionsWithElements( driver );
+        mainPage = new MainPage( driver );
+        loginPage = new LoginPage( driver );
         filterBlock = new FilterBlock( driver );
         itemsPage = new ItemsPage( driver );
         header = new Header( driver );
@@ -143,7 +150,9 @@ public class BaseTest {
     @After
     public void tearDown() {
         if (!(driver == null)) {
-            utils.screenShot( pathToScreenShot, driver );
+            if (!isTestPass) {
+                utils.screenShot( pathToScreenShot, driver );
+            }
             driver.quit();
         }
     }

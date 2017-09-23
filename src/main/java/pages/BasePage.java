@@ -14,7 +14,7 @@ import java.util.Map;
 
 @RunWith(value = Parameterized.class)
 public class BasePage {
-    private WebDriver driver;
+    WebDriver driver;
     public Logger logger;
     ActionsWithElements actionsWithElements;
 

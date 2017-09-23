@@ -10,6 +10,10 @@ import java.util.Map;
 
 public class RozetkaTest extends BaseTest {
 
+    public RozetkaTest(String browser) {
+        super( browser );
+    }
+
     @Test
     public void wishListRozetka() throws InterruptedException {
         String productID;
@@ -55,6 +59,8 @@ public class RozetkaTest extends BaseTest {
         productPage.addToWishList();
         header.goToWishList();
         String wishListID = wishList.getIdInWishList();
+
+        wishList.clearWishList();
 
         checkCriteria( "ID of product does not match", maxReviewsID, wishListID );
     }

@@ -9,12 +9,6 @@ import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
-import static java.util.concurrent.TimeUnit.*;
-
 public class ActionsWithElements {
     WebDriver driver;
     Logger logger;
@@ -43,6 +37,26 @@ public class ActionsWithElements {
         } catch (Exception e) {
             logger.error( "Element can't be clicked: " + element );
             Assert.fail( "Element can't be clicked: " + element );
+        }
+    }
+
+    public void clickAndHold(WebElement element) {
+        actions = new Actions( driver );
+        try {
+            actions.clickAndHold( element ).build().perform();
+            logger.info( "Element clicked and holded: " + element );
+        } catch (Exception e) {
+            logger.error( "Element can't be clicked: " + element );
+        }
+    }
+
+    public void click(WebElement element) {
+        actions = new Actions( driver );
+        try {
+            actions.click( element ).build().perform();
+            logger.info( "Element clicked: " + element );
+        } catch (Exception e) {
+            logger.error( "Element can't be clicked: " + element );
         }
     }
 
@@ -79,7 +93,7 @@ public class ActionsWithElements {
         WebElement element = null;
         try {
             element = driver.findElement( By.xpath( xpath ) );
-        } catch (Exception e){
+        } catch (Exception e) {
             logger.error( "WebElement can't be found by xPath: " + xpath );
         }
         return element;
@@ -89,7 +103,19 @@ public class ActionsWithElements {
         actions = new Actions( driver );
         try {
             webDriverWait.until( ExpectedConditions.visibilityOf( elementByXPath ) );
-            actions.moveToElement( elementByXPath ).build().perform();
+            actions.moveToElement( elementByXPath).build().perform();
+            logger.info( "Moved to element " + elementByXPath );
+        } catch (Exception e) {
+            logger.error( "Can't move to element." );
+            Assert.fail( "Can't move to element." );
+        }
+    }
+
+    public void moveToElementWithOffset(WebElement elementByXPath, int x, int y) {
+        actions = new Actions( driver );
+        try {
+            webDriverWait.until( ExpectedConditions.visibilityOf( elementByXPath ) );
+            actions.moveToElement( elementByXPath, x, y ).build().perform();
             logger.info( "Moved to element " + elementByXPath );
         } catch (Exception e) {
             logger.error( "Can't move to element." );
@@ -118,5 +144,13 @@ public class ActionsWithElements {
             logger.error( "Can't get text from tag" );
         }
         return tagValue;
+    }
+
+    public void waitForWebElementVisibility(WebElement element) {
+        try {
+            webDriverWait.until( ExpectedConditions.visibilityOf( element ) );
+        } catch (Exception e) {
+            logger.error( "Profile link not available" );
+        }
     }
 }

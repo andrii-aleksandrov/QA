@@ -15,10 +15,15 @@ public class WishList extends BasePage {
     @FindBy(xpath = "//a[@name='wishlist-delete']")
     private WebElement clearWishList;
 
-    @FindBy(xpath = "")
+    @FindBy(xpath = "//a[@name='wishlist-delete-submit']")
     private WebElement clearConfirmation;
 
     public String getIdInWishList(){
         return checkboxWithID.getAttribute( "goods_id" );
+    }
+
+    public void clearWishList(){
+        actionsWithElements.clickAction( clearWishList );
+        actionsWithElements.clickAction( clearConfirmation );
     }
 }
